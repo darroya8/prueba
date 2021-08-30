@@ -1,0 +1,282 @@
+    ################################################################################
+    #   Section: Organizations
+    ################################################################################
+    Organizations:
+    
+        - &OrdererOrg
+            Name: OrdererOrg
+            ID: OrdererMSP
+            MSPDir: crypto-config/ordererOrganizations/logistics.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('OrdererMSP.member')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('OrdererMSP.member')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('OrdererMSP.admin')"
+            OrdererEndpoints:
+                - orderer.logistics.com:6600
+    
+        - &Org1
+            Name: Org1MSP
+            ID: Org1MSP
+            MSPDir: crypto-config/peerOrganizations/org1.logistics.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('Org1MSP.admin')"
+                Endorsement:
+                    Type: Signature
+                    Rule: "OR('Org1MSP.peer')"
+            AnchorPeers:
+                - Host: peer0.org1.logistics.com
+                  Port: 6601
+    
+        - &Org2
+            Name: Org2MSP
+            ID: Org2MSP
+            MSPDir: crypto-config/peerOrganizations/org2.logistics.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('Org2MSP.admin', 'Org2MSP.peer', 'Org2MSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('Org2MSP.admin', 'Org2MSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('Org2MSP.admin')"
+                Endorsement:
+                    Type: Signature
+                    Rule: "OR('Org2MSP.peer')"
+            AnchorPeers:
+                - Host: peer0.org2.logistics.com
+                  Port: 6601
+    
+        - &Org3
+            Name: Org3MSP
+            ID: Org3MSP
+            MSPDir: crypto-config/peerOrganizations/org3.logistics.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('Org3MSP.admin', 'Org3MSP.peer', 'Org3MSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('Org3MSP.admin', 'Org3MSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('Org3MSP.admin')"
+                Endorsement:
+                    Type: Signature
+                    Rule: "OR('Org3MSP.peer')"
+            AnchorPeers:
+                - Host: peer0.org3.logistics.com
+                  Port: 6601
+
+        - &Org4
+            Name: Org4MSP
+            ID: Org4MSP
+            MSPDir: crypto-config/peerOrganizations/org4.logistics.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('Org4MSP.admin', 'Org4MSP.peer', 'Org4MSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('Org4MSP.admin', 'Org4MSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('Org4MSP.admin')"
+                Endorsement:
+                    Type: Signature
+                    Rule: "OR('Org4MSP.peer')"
+            AnchorPeers:
+                - Host: peer0.org4.logistics.com
+                  Port: 6601
+    
+        - &Org5
+            Name: Org5MSP
+            ID: Org5MSP
+            MSPDir: crypto-config/peerOrganizations/org5.logistics.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('Org5MSP.admin', 'Org5MSP.peer', 'Org5MSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('Org5MSP.admin', 'Org5MSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('Org5MSP.admin')"
+                Endorsement:
+                    Type: Signature
+                    Rule: "OR('Org5MSP.peer')"
+            AnchorPeers:
+                - Host: peer0.org5.logistics.com
+                  Port: 6601
+    ################################################################################
+    #   SECTION: Capabilities
+    ################################################################################
+    Capabilities:
+        Channel: &ChannelCapabilities
+            V2_0: true
+    
+        Orderer: &OrdererCapabilities
+            V2_0: true
+    
+        Application: &ApplicationCapabilities
+            V2_0: true        
+    
+    ################################################################################
+    #   SECTION: Application
+    ################################################################################
+    Application: &ApplicationDefaults
+    
+        # Organizations is the list of orgs which are defined as participants on
+        # the application side of the network
+        Organizations:
+    
+        # Policies defines the set of policies at this level of the config tree
+        # For Application policies, their canonical path is
+        #   /Channel/Application/<PolicyName>
+        Policies:
+            Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+            Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+            Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+            LifecycleEndorsement:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Endorsement"
+            Endorsement:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Endorsement"
+    
+        Capabilities:
+            <<: *ApplicationCapabilities    
+    
+    ################################################################################
+    #   SECTION: Orderer
+    ################################################################################
+    Orderer: &OrdererDefaults
+        # Orderer Type: The orderer implementation to start
+        OrdererType: solo
+    
+    #    OrdererType: etcdraft
+    
+        EtcdRaft:
+            Consenters:
+            - Host: orderer.logistics.com
+              Port: 6600
+              ClientTLSCert: ../organizations/ordererOrganizations/logistics.com/orderers/orderer.logistics.com/tls/server.crt
+              ServerTLSCert: ../organizations/ordererOrganizations/logistics.com/orderers/orderer.logistics.com/tls/server.crt
+    
+        Addresses:
+            - orderer.logistics.com:6600
+        BatchTimeout: 2s
+        BatchSize:
+            MaxMessageCount: 10
+            AbsoluteMaxBytes: 99 MB
+            PreferredMaxBytes: 512 KB
+    
+        Kafka:
+            Brokers:
+                - 127.0.0.1:9092
+        Organizations:
+    
+        Policies:
+            Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+            Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+            Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+            # BlockValidation specifies what signatures must be included in the block
+            # from the orderer for the peer to validate it.
+            BlockValidation:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+    
+    ################################################################################
+    #
+    #   CHANNEL
+    #
+    #   This section defines the values to encode into a config transaction or
+    #   genesis block for channel related parameters.
+    #
+    ################################################################################
+    Channel: &ChannelDefaults
+        # Policies defines the set of policies at this level of the config tree
+        # For Channel policies, their canonical path is
+        #   /Channel/<PolicyName>
+        Policies:
+            # Who may invoke the 'Deliver' API
+            Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+            # Who may invoke the 'Broadcast' API
+            Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+            # By default, who may modify elements at this config level
+            Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+    
+        # Capabilities describes the channel level capabilities, see the
+        # dedicated Capabilities section elsewhere in this file for a full
+        # description
+        Capabilities:
+            <<: *ChannelCapabilities
+    
+    ################################################################################
+    #   Profile
+    ################################################################################
+    Profiles:
+    
+        FiveOrgsOrdererGenesis:
+            <<: *ChannelDefaults
+            Orderer:
+                <<: *OrdererDefaults
+                Organizations:
+                    - *OrdererOrg
+                Capabilities:
+                    <<: *OrdererCapabilities
+            Consortiums:
+                SampleConsortium:
+                    Organizations:
+                        - *Org1
+                        - *Org2
+                        - *Org3
+                        - *Org4
+                        - *Org5
+        FiveOrgsChannel:
+            Consortium: SampleConsortium
+            <<: *ChannelDefaults
+            Application:
+                <<: *ApplicationDefaults
+                Organizations:
+                    - *Org1
+                    - *Org2
+                    - *Org3
+                    - *Org4
+                    - *Org5
+                Capabilities:
+                    <<: *ApplicationCapabilities
